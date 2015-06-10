@@ -1,0 +1,21 @@
+import(methods)
+export("buildModelObj")
+exportClass("modelObj",
+            "modelObjFit")
+exportMethods(
+     "coef",
+     "fit", 
+     "fitObject",
+     "model",
+     "plot",  
+     "predict",
+     "predictor",
+     "predictorArgs",
+     "predictorArgs<-",
+     "residuals", 
+     "show",
+     "solver",
+     "solverArgs",
+     "solverArgs<-",
+     "summary")
+
