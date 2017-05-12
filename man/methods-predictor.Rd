@@ -1,6 +1,9 @@
 \name{predictor}
 \alias{predictor}
 \alias{predictor,modelObj-method}
+\alias{predictor,modelObjFit-method}
+\alias{show,modelObjFit-method}
+\alias{summary,modelObjFit-method}
 
 \title{ Retrieve Prediction Method }
 
@@ -21,8 +24,8 @@
 }
 
 \value{
-       Returns an object of class "character"; the name of the prediction
-       method specified in the modelObj object.
+       Returns an object of class "character" or "function"; 
+       the prediction method specified in the modelObj object.
 }
 
 

@@ -1,8 +1,6 @@
 \name{fit}
 \alias{fit}
 \alias{fit,modelObj,data.frame,vector-method}
-\alias{predictor,modelObjFit-method}
-\alias{predictorArgs,modelObjFit-method}
 
 \title{Execute Regression Step}
 
@@ -32,7 +30,9 @@
          \code{coef},
          \code{plot},
          \code{predict},
-         \code{residuals}, and
+         \code{print}
+         \code{residuals}, 
+         \code{show}, and
          \code{summary}.}
 
 \value{

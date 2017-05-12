@@ -7,7 +7,7 @@
 \description{Executes the prediction method for an object of class
              modelObjFit.}
 
-\usage{ \S4method{predict}{modelObjFit}(object, newdata = NULL, ...) }
+\usage{ \S4method{predict}{modelObjFit}(object, newdata, ...) }
 
 \arguments{
 

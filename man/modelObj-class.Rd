@@ -14,9 +14,9 @@ buildModelObj() should be used.
 \section{Slots}{
   \describe{
     \item{\code{model}:    }{Object of class \code{formula} }
-    \item{\code{solver}:   }{Object of class \code{methodObj} 
+    \item{\code{solver}:   }{Object of class \code{methodObjSolver} 
                              method to obtain parameter estimates.}
-    \item{\code{predictor}:}{Object of class \code{methodObj} 
+    \item{\code{predictor}:}{Object of class \code{methodObjPredict} 
                              method to obtain predicted values.}
   }
 }

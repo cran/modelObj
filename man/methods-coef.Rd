@@ -19,7 +19,7 @@
 
 \value{Coefficients extracted from the modelObjFit object 'object'.
        For standard model fitting
-       classes the value returned is a named vector. If no
+       classes, the value returned is a named vector. If no
        coef() method is defined for the regression method specified
        in the governing modelObj, NULL is returned.}
 

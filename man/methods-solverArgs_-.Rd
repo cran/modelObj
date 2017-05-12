@@ -21,7 +21,8 @@
 }
 \details{
 The first two elements of the list contain the name for the formula object
- and the name for the data.frame. buildModelObj creates modelObj using an internal
+or covariate matrix and the name for the data.frame or response. 
+buildModelObj creates modelObj using an internal
 convention, which is critical to the correct implementation of this package. 
 These two elements should not be changed and will be carried over from the 
 original argument list.

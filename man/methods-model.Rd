@@ -1,10 +1,13 @@
 \name{model}
 \alias{model}
 \alias{model,modelObj-method}
+\alias{model,modelObjXY-method}
+\alias{model,modelObjFormula-method}
+\alias{model,modelObjFit-method}
 
-\title{ Retrieve Formula Object }
+\title{ Retrieve model Object }
 
-\description{ Retrieve the model formula from an object of class modelObj. }
+\description{ Retrieve the model slot from an object of class modelObj. }
 
 \usage{
        \S4method{model}{modelObj}(object, ...)
@@ -19,7 +22,7 @@
 }
 
 \value{
-       Returns an object of class "formula".
+       Returns an object of class "formula."
 }
 
 \author{

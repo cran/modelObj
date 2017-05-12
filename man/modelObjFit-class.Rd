@@ -2,8 +2,6 @@
 \Rdversion{0.4}
 \docType{class}
 \alias{modelObjFit-class}
-\alias{show,modelObjFit-method}
-\alias{summary,modelObjFit-method}
 
 \title{Class \code{"modelObjFit"}}
 \description{A class containing the fit results for a model object
@@ -20,6 +18,8 @@
                              (i.e., class(fitObj)="lm" if solver.method=lm). }
     \item{\code{func}:     }{Object of class \code{methodObj} 
                              the method to be used to obtain predicted values. }
+    \item{\code{model}:     }{Object of class \code{formula} 
+                             model. }
   }
 }
 \section{Methods}{

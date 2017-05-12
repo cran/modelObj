@@ -1,7 +1,11 @@
 import(methods)
+importFrom(stats, "coef", "predict", "residuals", "update")
+importFrom(graphics, "plot")
+ 
 export("buildModelObj")
 exportClass("modelObj",
             "modelObjFit")
+
 exportMethods(
      "coef",
      "fit", 

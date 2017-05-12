@@ -1,6 +1,7 @@
 \name{predictorArgs}
 \alias{predictorArgs}
 \alias{predictorArgs,modelObj-method}
+\alias{predictorArgs,modelObjFit-method}
 
 \title{Retrieve Arguments Specified for the Prediction Method}
 

@@ -20,9 +20,9 @@
 \details{This function is useful for accessing methods that are defined
          by the regression method but are not directly accessible from
          the modelObjFit object. For example, for many regression methods,
-         users can retrieve the fitted values by calling fitted(object). 
+         users can retrieve the fitted values by calling fitted.values(object). 
          This method is not directly accessible from a modelObjFit. However,
-         fitted() can be applied to the object returned by fitObject().}
+         fitted.values() can be applied to the object returned by fitObject().}
 
 \value{The Value returned by the regression method specified in
        the governing modelObj. The exact structure of the value will
@@ -57,7 +57,7 @@
     fit.obj <- fit(object=mo, data=X, response=Y)
 
     obj <- fitObject(fit.obj)
-    fobj <- fitted(obj)
+    fobj <- fitted.values(obj)
     head(fobj)
 
 }
