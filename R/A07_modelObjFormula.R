@@ -1,15 +1,4 @@
-########################################################################
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
-# Class modelObjFormula                                                #
-#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::#
-# contains methods and arguments for fitting                           #
-#                                                                      #
-#  model : a single formula objects to be evaluated                    #
-#                                                                      #
-#  solver : methodObj for parameter estimates                          #
-#                                                                      #
-#  predictor : methodObj for predictions                               #
-########################################################################
+#' @rdname modelObj
 setClass("modelObjFormula",
          contains = c("modelObj"))
 
@@ -19,8 +8,11 @@ setClass("modelObjFormula",
                                 predict.method,  
                                 predict.args) {
 
-  solver <- .newMethodObjSolverFormula(method = solver.method, args = solver.args)
-  predictor <- .newMethodObjPredict(method = predict.method, args = predict.args)
+  solver <- .newMethodObjSolverFormula(method = solver.method, 
+                                       args = solver.args)
+
+  predictor <- .newMethodObjPredict(method = predict.method, 
+                                    args = predict.args)
 
   obj <- new("modelObjFormula", 
              model = model, 

@@ -1,128 +1,313 @@
+#' Class \code{modelObjFit}
+#'
+#' A class for storing regression analysis results.
+#'
+#' @name modelObjFit
+#' @rdname modelObjFit
+#'
+#' @slot fitObj Object returned by the regression analysis
+#' @slot model Object of class \code{formula}
+#' @slot func Object of class \code{methodObjPredict} method to obtain 
+#'   predicted values.
+#'
+#' @section Methods:
+#'   \describe{
+#'     \item{fitObject}{: Extracts regression step. }
+#'     \item{model}{: Retrieve model. }
+#'     \item{solver}{: Retrieve regression method name. }
+#'     \item{solverArgs}{: Retrieve arguments to be sent to regression method. }
+#'     \item{solverArgs(object)<-}{: Set arguments to be sent to regression method. }
+#'     \item{predictor}{: Retrieve prediction method name. }
+#'     \item{predictorArgs}{: Retrieve arguments to be sent to prediction method. }
+#'     \item{predictorArgs(object)<-}{: Set arguments to be sent to prediction method. }
+#'   }
+#' 
+#' @examples
+#' showClass("modelObjFit")
+#' 
 setClass("modelObjFit", 
          slots = c(fitObj = "ANY",
-                   model  = "formula",
-                   func   = "methodObjPredict"))
+                   modelObj = "modelObj"))
 
+#' Obtain parameter estimates
+#'
+#' Performs specified regression analysis.
+#'
+#' If defined by the modeling function, the following methods can be applied 
+#'   to the value object returned: \code{coef}, \code{plot}, \code{predict},
+#'   \code{print}, \code{residuals}, \code{show}, and \code{summary}.
+#'
+#' @param object An object of class \code{modelObj} as returned by the 
+#'   buildModelObj function.
+#' @param data An object of class data.frame containing the variables in the 
+#'   model.
+#' @param response An object of class vector containing the response variable.
+#' @param ... ignored
+#'
+#' @return An object of class \code{modelObjFit}, which contains the
+#'   object returned by the modeling function and the method to be used to 
+#'   obtain predictions.
+#'
+#' @name fit
+#' @usage
+#'   fit(object, data, response, ...)
+#'
+#' @examples
+#'    # generate data
+#'    X <- matrix(rnorm(1000,0,1),
+#'                ncol=4,
+#'                dimnames=list(NULL,c("X1","X2","X3","X4")))
+#'
+#'    Y <- X \%*\% c(0.1, 0.2, 0.3, 0.4) + rnorm(250)
+#'
+#'    X <- data.frame(X)
+#'
+#'    # create modeling object using a formula
+#'    mo <- buildModelObj(model=Y ~ X1 + X2 + X3 + X4,
+#'                   solver.method='lm')
+#'
+#'    # fit model
+#'    fit.obj <- fit(object=mo, data=X, response=Y)
+#'
+#'    coef(fit.obj)
+#'    head(residuals(fit.obj))
+#'    plot(fit.obj)
+#'    head(predict(fit.obj,X))
+#'    summary(fit.obj)
+#'
+#' @export
+setGeneric(name = "fit", 
+           def = function(object, data, response, ...){
+                   standardGeneric("fit")
+                 })
+
+#' @rdname fit
 setMethod(f = "fit",
           signature = c(  object = "modelObj", 
                             data = "data.frame", 
-                        response = "vector"),
+                        response = "ANY"),
           definition = function(object, data, response, ...) {
 
-                         fitObj <- .fit(object = object@solver, 
-                                        data = data, 
-                                        response = response, 
-                                        model = object@model)
+              fitObj <- .fit(object = object@solver, 
+                             data = data, 
+                             response = response, 
+                             model = model(object = object))
 
-                         ft <- new("modelObjFit",
-                                   fitObj = fitObj, 
-                                   model = object@model,
-                                   func = object@predictor)
+              ft <- new("modelObjFit",
+                        fitObj = fitObj, 
+                        modelObj = object)
 
-                         return(ft)
-                       })
+              return( ft )
+            })
 
+
+#' Retrieve Regression Object
+#'
+#' Retrieves the value object returned by the regression method used to obtain 
+#'   parameter estimates.
+#'
+#' This function is useful for accessing methods that are defined by the 
+#'   regression method but are not directly accessible from the modelObjFit 
+#'   object. For example, for many regression methods, users can retrieve the 
+#'   fitted values by calling fitted.values(object). This method is not 
+#'   directly accessible from a modelObjFit. However, fitted.values() can be 
+#'   applied to the object returned by fitObject().
+#'
+#' @usage fitObject(object, ...)
+#'
+#' @param object An object of class modelObjFit.
+#' @param ... ignored.
+#'
+#' @name fitObject
+#'
+#' @return The Value returned by the regression method specified in the 
+#'   governing modelObj. The exact structure of the value will depend on the 
+#'   regression method. For example, if nls() is the regression method, a list 
+#'   is returned.
+#'
+#' @examples
+#'    # Generate data
+#'    X <- matrix(rnorm(1000,0,1),
+#'                ncol=4,
+#'                dimnames=list(NULL,c("X1","X2","X3","X4")))
+#'
+#'    Y <- X \%*\% c(0.1, 0.2, 0.3, 0.4) + rnorm(250)
+#'
+#'    X <- data.frame(X)
+#'
+#'    # Create modeling object using a formula
+#'    mo <- buildModelObj(model=Y ~ X1 + X2 + X3 + X4,
+#'                        solver.method='lm')
+#'
+#'    # Fit model
+#'    fit.obj <- fit(object=mo, data=X, response=Y)
+#'
+#'    obj <- fitObject(fit.obj)
+#'    fobj <- fitted.values(obj)
+#'    head(fobj)
+#'
+#' @export
+setGeneric(name = "fitObject",
+           def = function(object,...) { standardGeneric("fitObject") })
+
+#' @rdname fitObject
 setMethod(f = "fitObject", 
-         signature = c(object="modelObjFit"), 
-         definition = function(object,...){
-                        return(object@fitObj)
-                      })
+         signature = c(object = "modelObjFit"), 
+         definition = function(object,...) { return(object@fitObj) })
 
+#' @rdname model
 setMethod(f = "model", 
-         signature = c(object="modelObjFit"), 
-         definition = function(object,...){
-                        return( object@model )
-                      })
+         signature = c(object = "modelObjFit"), 
+         definition = function(object,...) { return( model(object@modelObj) ) })
 
+#' @rdname predictor
 setMethod(f = "predictor", 
-         signature = c(object="modelObjFit"), 
-         definition = function(object,...){
-                        return( object@func@method)
-                      })
+         signature = c(object = "modelObjFit"), 
+         definition = function(object,...) { return( predictor(object@modelObj) ) })
 
+#' @rdname predictorArgs
 setMethod(f = "predictorArgs", 
-         signature = c(object="modelObjFit"), 
-         definition = function(object,...){
-                        return(object@func@methodArgs)
-                      })
+         signature = c(object = "modelObjFit"), 
+         definition = function(object,...) { return( predictorArgs(object@modelObj) ) })
 
+#' @rdname solver
+setMethod(f = "solver", 
+         signature = c(object = "modelObjFit"), 
+         definition = function(object,...) { return( solver(object@modelObj) ) })
+
+#' @rdname solverArgs
+setMethod(f = "solverArgs", 
+         signature = c(object = "modelObjFit"), 
+         definition = function(object,...) { return( solverArgs(object@modelObj) ) })
+
+#' @rdname modelObj-internal-api
+#' @importFrom stats coef
+#' @export
 setMethod(f="coef",
-          signature = c(object="modelObjFit"),
+          signature = c(object = "modelObjFit"),
           definition = function(object,...){
-                         tmp <- try(coef(object@fitObj,...), silent=FALSE)
-                         if( class(tmp) == 'try-error' ) {
-                           warnMsg("coef", class(object@fitObj))
-                           return(NULL)
-                         } else {
-                           return(tmp)
-                         }
-                       })
+              tmp <- tryCatch(expr = coef(object = object@fitObj,...), 
+                              error = function(e){
+                                        warnMsg(x = "coef", 
+                                                cx = class(x = object@fitObj))
+                                        return( NULL )
+                                      })
+              return( tmp )
+            })
 
+#' @rdname modelObj-internal-api
+#' @importFrom graphics plot
+#' @export
 setMethod(f = "plot",
-          signature = c(x="modelObjFit"),
+          signature = c(x = "modelObjFit"),
           definition = function(x, ...){
-                         tmp <- try(plot(x@fitObj, ...), 
-                                    silent=TRUE )
-                         if( class(tmp) == 'try-error' ) {
-                           warnMsg("plot", class(x@fitObj))
-                         }
-                       })
+              tmp <- tryCatch(expr = plot(x = x@fitObj,...), 
+                              error = function(e){
+                                        warnMsg(x = "plot", 
+                                                cx = class(x = x@fitObj))
+                                      })
+            })
 
+#' @rdname modelObj-internal-api
+#' @export
 setMethod(f = "print",
-          signature = c(x="modelObjFit"),
-          definition = function(x){
-                         print(x@fitObj)
-                       })
+          signature = c(x = "modelObjFit"),
+          definition = function(x) { print(x@fitObj) })
 
+#' Model Predictions
+#'
+#' Predictions from the results of a fit object.
+#'
+#' @param object An object of class \code{modelObjFit} as returned by the 
+#'   fit() function.
+#' @param newdata An object of class data.frame containing the variables in the 
+#'   model.
+#' @param ... ignored
+#'
+#' @return Model predictions, the form of which depend on the regression analysis.
+#'
+#' @name predict
+#' @rdname predict
+#' @usage
+#'   predict(object, ...)
+#'
+#' @examples
+#'    # generate data
+#'    X <- matrix(rnorm(1000,0,1),
+#'                ncol=4,
+#'                dimnames=list(NULL,c("X1","X2","X3","X4")))
+#'
+#'    Y <- X \%*\% c(0.1, 0.2, 0.3, 0.4) + rnorm(250)
+#'
+#'    X <- data.frame(X)
+#'
+#'    # create modeling object using a formula
+#'    mo <- buildModelObj(model=Y ~ X1 + X2 + X3 + X4,
+#'                   solver.method='lm')
+#'
+#'    # fit model
+#'    fit.obj <- fit(object=mo, data=X, response=Y)
+#'
+#'    predict(fit.obj)
+#'    predict(fit.obj, newdata = X[1:10,])
+#'
+#' @importFrom stats predict
+#' @export
+NULL
+
+#' @rdname predict
 setMethod(f = "predict",
           signature = c(object="modelObjFit"),
-          definition = function(object, newdata, ...){
-
-                         if( missing(newdata) ) {
-                           res <- .predict(object = object@func,
-                                           fitObj = object@fitObj)
-                         } else {
-                           res <- .predict(object = object@func,
-                                           newdata = newdata,
-                                           fitObj = object@fitObj)
-                         }
-                         return( res )
-                       })
+          definition = function(object, newdata, ...) {
+              if (missing(x = newdata)) {
+                res <- .predict(object = object@modelObj@predictor,
+                                fitObj = object@fitObj)
+              } else {
+                res <- .predict(object = object@modelObj@predictor,
+                                newdata = newdata,
+                                fitObj = object@fitObj)
+              }
+              return( res )
+            })
                        
+#' @rdname modelObj-internal-api
+#' @importFrom stats residuals
+#' @export
 setMethod(f = "residuals",
-          signature = c(object="modelObjFit"),
-          definition = function(object, ...){
+          signature = c(object = "modelObjFit"),
+          definition = function(object, ...) {
 
-                         tmp <- try(residuals(object@fitObj, ...), 
-                                    silent=TRUE)
+              tmp <- tryCatch(expr = residuals(object = object@fitObj,...), 
+                              error = function(e){
+                                        warnMsg(x = "residuals", 
+                                                cx = class(x = object@fitObj))
+                                        return( NULL )
+                                      })
 
-                         if( class(tmp) == 'try-error' ||
-                             is(tmp,"NULL") ) {
-                           warnMsg("residuals", 
-                                   class(object@fitObj))
-                         } else {
-                           matrix(data = tmp, 
-                                  ncol = 1L, 
-                                  dimnames=list(NULL, "residuals"))
-                         }
-                       })
+              if (!is(object = tmp, class2 = "matrix")) {
+                tmp <- matrix(data = tmp, 
+                              ncol = 1L, 
+                              dimnames=list(NULL, "residuals"))
+              }
+              return( tmp )
+             })
 
+#' @rdname modelObj-internal-api
+#' @export
 setMethod(f = "show",
           signature = c(object="modelObjFit"),
-          definition = function(object){
-                         show(object@fitObj)
-                       })
+          definition = function(object) { show(object@fitObj) })
 
+#' @rdname modelObj-internal-api
+#' @export
 setMethod(f = "summary",
           signature = c(object="modelObjFit"),
           definition = function(object,...){
-                         s1 <- try(summary(object@fitObj,...), 
-                                   silent=TRUE)
-                         if( any(class(s1) == 'try-error') ) {
-                           warnMsg("summary", class(object@fitObj))
-                         } else {
-                           return(s1)
-                         }
-                       })
-
-
+              tmp <- tryCatch(expr = summary(object = object@fitObj,...), 
+                              error = function(e){
+                                        warnMsg(x = "summary", 
+                                                cx = class(x = object@fitObj))
+                                        return( NULL )
+                                      })
+              return( tmp )
+             })

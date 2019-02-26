@@ -3,7 +3,6 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{graphicx}
-\usepackage[utf8x]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{parskip}
@@ -17,6 +16,7 @@
 \setlength\parindent{0pt}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \title{modelObj: A Model Object Framework for Regression Analysis} 
 \author{Shannon T. Holloway} 
 \maketitle
@@ -339,7 +339,7 @@ Our function takes the following form
 <<>>=
 exampleFun <- function(modelObj, data, Y){
 
-    fitObj <- fit(modelObj, data, Y)
+    fitObj <- fit(object = modelObj, data = data, response = Y)
 
     ##Test that coef() is an available method
     cfs <- try(coef(fitObj), silent=TRUE)

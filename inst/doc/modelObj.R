@@ -51,7 +51,7 @@ summary(pressure)
 ###################################################
 exampleFun <- function(modelObj, data, Y){
 
-    fitObj <- fit(modelObj, data, Y)
+    fitObj <- fit(object = modelObj, data = data, response = Y)
 
     ##Test that coef() is an available method
     cfs <- try(coef(fitObj), silent=TRUE)

@@ -1,162 +1,108 @@
+#' Class \code{methodObjSolverFormula}
+#'
+#' Extends class \code{methodObjSolver} to indicate formula input
+#'
+#' @name methodObjSolverFormula-class
+#'
+#' @slot dataName A character giving the formal argument for input data.frame
+#' @slot formulaName A character giving the formal argument for the model input
+#' @slot method ANY A character name or function.
+#' @slot methodArgs A list of inputs to be passed to the method.
+#'
+#' @keywords internal
 setClass("methodObjSolverFormula", 
          slots = c(formulaName = "character",
                    dataName = "character"),
          contains = c("methodObjSolver"))
 
-setGeneric(name = ".fit", 
-           def = function(object, data, response, ...){
-                   standardGeneric(".fit")
-                 })
-
+#' @rdname modelObj-internal-api
+#' @importFrom stats update
 setMethod(f = ".fit",  
-          signature = c(object = "methodObjSolverFormula",
-                        data = "data.frame",
-                        response = "vector"), 
+          signature = c(object = "methodObjSolverFormula"), 
           definition = function(object, data, response, model) {
 
-                         #-------------------------------------------#
-                         # update formula w/ response variable       #
-                         #-------------------------------------------#
-                         model <- stats::update(model, YinternalY ~ .)
+              # update formula w/ response variable
+              model <- update(old = model, new = YinternalY ~ .)
 
-                         #-------------------------------------------#
-                         # add response to data.matrix               #
-                         #-------------------------------------------#
-                         nms <- colnames(data)
-                         data <- cbind(data,response)
-                         colnames(data) <- c(nms, "YinternalY")
+              # add response to data.matrix
+              nms <- colnames(x = data)
+              if (is.null(x = nms)) stop("unable to obtain fit")
+              data <- cbind(data, response)
+              colnames(x = data) <- c(nms, "YinternalY")
 
-                         #-------------------------------------------#
-                         # Set formula argument                      #
-                         #-------------------------------------------#
-                         object@methodArgs[[ object@formulaName ]] <- model
+              # set formula argument
+              object@methodArgs[[ object@formulaName ]] <- model
 
-                         #-------------------------------------------#
-                         # Set the data argument to the local dataset#
-                         #-------------------------------------------#
-                         object@methodArgs[[ object@dataName ]] <- quote(data)
+              # set the data argument to the local dataset
+              object@methodArgs[[ object@dataName ]] <- quote(expr = data)
 
-                         #-------------------------------------------#
-                         # Perform the fit                           #
-                         #-------------------------------------------#
-                         fit <- try(do.call(what = object@method, 
-                                            args = object@methodArgs), silent = TRUE)
+              # perform the fit
+              return( .fit(object = as(object = object, Class = "methodObjSolver"), 
+                           data = data, response = response) )
 
-                         if( is(fit, "try-error") ) {
-                           stop(paste("Unable to fit model.", attr(fit,"condition")))
-                         }
+            })
 
-                         return(fit)
-                       })
-
+#' Create an object of class methodObjSolverFormula
+#'
+#' Creates an object of class methodObjSolverFormula
+#'
+#' @param args A list of input arguments
+#'
+#' @return An object of class methodObjSolverFormula
+#'
+#' @name newMethodObjSolverFormula
+#' @rdname newMethodObjSolverFormula
+#'
+#' @keywords internal
 setGeneric(name = ".newMethodObjSolverFormula", 
-           def = function(method, args){
+           def = function(args, ...) {
                    standardGeneric(".newMethodObjSolverFormula")
                  })
 
-setGeneric(name = ".newMethodObjSolverFormula", 
-           def = function(method, args){
-                   standardGeneric(".newMethodObjSolverFormula")
-                 })
-
+#' @rdname modelObj-internal-api
 setMethod(f = ".newMethodObjSolverFormula",  
-          signature = c(method = 'character',
-                        args = 'NULL'), 
-          definition = function(method, args) {
+          signature = c(args = 'ANY'), 
+          definition = function(args, method) { stop("not allowed") })
 
-                         if( !exists(method) ) {
-                           stop("solver method does not exist.")
-                         }
-
-                         args <- list("formula"="formula", "data"="data")
-
-                         obj <- new("methodObjSolverFormula", 
-                                    formulaName = "formula",
-                                    dataName = "data",
-                                    method = method, 
-                                    methodArgs = args)
-
-                         return(obj)
-                       })
-
+#' @rdname modelObj-internal-api
 setMethod(f = ".newMethodObjSolverFormula",  
-          signature = c(method = 'character',
-                        args = 'list'), 
-          definition = function(method, args) {
+          signature = c(args = 'NULL'), 
+          definition = function(args, method) {
 
-                         if( !exists(method) ) {
-                           stop("solver method does not exist.")
-                         }
+              args <- list("formula" = "formula", "data" = "data")
 
-                         i <- which(sapply(args, function(x){all(x == "data")}))
-                         if( length(i) == 0L ) {
-                           args <- c("data" = "data", args)
-                           dataName = "data"
-                         } else {
-                           dataName = names(args)[i]
-                         }
+              return( .newMethodObjSolverFormula(method = method, args = args) )
+            })
 
-                         i <- which(sapply(args, function(x){all(x == "formula")}))
-                         if( length(i) == 0L ) {
-                           args <- c("formula" = "formula", args)
-                           formulaName = "formula"
-                         } else {
-                           formulaName = names(args)[i]
-                         }
-
-                         obj <- new("methodObjSolverFormula", 
-                                    formulaName = formulaName,
-                                    dataName = dataName,
-                                    method = method, 
-                                    methodArgs = args)
-
-                         return(obj)
-                       })
-
+#' @rdname modelObj-internal-api
 setMethod(f = ".newMethodObjSolverFormula",  
-          signature = c(method = 'function',
-                        args = 'NULL'), 
-          definition = function(method, args) {
+          signature = c(args = 'list'), 
+          definition = function(args, method) {
 
-                         args <- list("formula" = "formula", 
-                                      "data" = "data")
+              i <- which(x = sapply(X = args, 
+                                    FUN = function(x){ all(x == "data") }))
+              if (length(x = i) == 0L) {
+                args <- c("data" = "data", args)
+                dataName = "data"
+              } else {
+                dataName = names(x = args)[i]
+              }
 
-                         obj <- new("methodObjSolverFormula", 
-                                    formulaName = "formula",
-                                    dataName = "data",
-                                    method = method, 
-                                    methodArgs = args)
+              i <- which(x = sapply(X = args, 
+                                    FUN = function(x){ all(x == "formula") }))
+              if (length(x = i) == 0L) {
+                args <- c("formula" = "formula", args)
+                formulaName = "formula"
+              } else {
+                formulaName = names(x = args)[i]
+              }
 
-                         return(obj)
-                       })
+              mo <- .newMethodObjSolver(method = method, args = args)
 
-setMethod(f = ".newMethodObjSolverFormula",  
-          signature = c(method = 'function',
-                        args = 'list'), 
-          definition = function(method, args) {
+              obj <- new("methodObjSolverFormula", 
+                         formulaName = formulaName,
+                         dataName = dataName,
+                         mo)
 
-                         i <- which(sapply(args, function(x){all(x == "data")}))
-                         if( length(i) == 0L ) {
-                           args <- c("data" = "data", args)
-                           dataName = "data"
-                         } else {
-                           dataName = names(args)[i]
-                         }
-
-                         i <- which(sapply(args, function(x){all(x == "formula")}))
-                         if( length(i) == 0L ) {
-                           args <- c("formula" = "formula", args)
-                           formulaName = "formula"
-                         } else {
-                           formulaName = names(args)[i]
-                         }
-
-                         obj <- new("methodObjSolverFormula", 
-                                    formulaName = formulaName,
-                                    dataName = dataName,
-                                    method = method, 
-                                    methodArgs = args)
-
-                         return(obj)
-                       })
-
+              return( obj )
+            })
