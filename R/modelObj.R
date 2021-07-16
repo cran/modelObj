@@ -29,6 +29,8 @@
 #' @examples
 #' showClass("modelObj")
 #' 
+#' @include methodObjSolver.R methodObjPredict.R
+#'
 setClass(Class = "modelObj",
          slots = c(    model = "formula",
                       solver = "methodObjSolver",
@@ -50,9 +52,14 @@ setClass(Class = "modelObj",
 setGeneric(name = "model",
            def = function(object,...) { standardGeneric("model") })
 
-#' @rdname modelObj-internal-api
+#' @rdname model
 setMethod(f = "model", 
-          signature = c(object="modelObj"), 
+          signature = c(object = "ANY"), 
+          definition = function(object,...) { stop("not defined") })
+
+#' @rdname model
+setMethod(f = "model", 
+          signature = c(object = "modelObj"), 
           definition = function(object,...) { return(object@model) })
 
 #' Retrieve Solver Method
@@ -71,9 +78,14 @@ setMethod(f = "model",
 setGeneric(name = "solver",
            def = function(object,...) { standardGeneric("solver") })
 
-#' @rdname modelObj-internal-api
+#' @rdname solver
 setMethod(f = "solver",  
-          signature = c(object="modelObj"), 
+          signature = c(object = "ANY"), 
+          definition = function(object,...) { stop("not defined") })
+
+#' @rdname solver
+setMethod(f = "solver",  
+          signature = c(object = "modelObj"), 
           definition = function(object,...) { return( method(object@solver) ) })
 
 #' Retrieve Solver Arguments
@@ -93,11 +105,16 @@ setMethod(f = "solver",
 setGeneric(name = "solverArgs",
            def = function(object,...) { standardGeneric("solverArgs") })
 
-#' @rdname modelObj-internal-api
+#' @rdname solverArgs
 setMethod(f = "solverArgs",  
-          signature = c(object="modelObj"), 
+          signature = c(object = "ANY"), 
+          definition = function(object,...) { stop("not defined") })
+
+#' @rdname solverArgs
+setMethod(f = "solverArgs",  
+          signature = c(object = "modelObj"), 
           definition = function(object,...) {
-              return( methodArgs(object@solver) )
+              return( methodArgs(object = object@solver) )
             })
 
 #' @rdname solverArgs
@@ -107,11 +124,18 @@ setMethod(f = "solverArgs",
 setGeneric(name = "solverArgs<-",
            def = function(object,value) { standardGeneric("solverArgs<-") })
 
-#' @rdname modelObj-internal-api
+#' @rdname solverArgs
 setMethod(f = "solverArgs<-",   
-          signature = c(object="modelObj"), 
+          signature = c(object = "ANY",
+                        value = "ANY"), 
+          definition = function(object, value) { stop("not defined") })
+
+#' @rdname solverArgs
+setMethod(f = "solverArgs<-",   
+          signature = c(object = "modelObj",
+                        value = "list"), 
           definition = function(object, value) {
-              methodArgs(object@solver) <- value
+              methodArgs(object = object@solver) <- value
               return( object )
             })
 
@@ -131,11 +155,16 @@ setMethod(f = "solverArgs<-",
 setGeneric(name = "predictor",
            def = function(object,...) { standardGeneric("predictor") })
 
-#' @rdname modelObj-internal-api
+#' @rdname predictor
+setMethod(f = "predictor",  
+          signature = c(object="modelObj"), 
+          definition = function(object,...) { stop("not defined") })
+
+#' @rdname predictor
 setMethod(f = "predictor",  
           signature = c(object="modelObj"), 
           definition = function(object,...) {
-              return( method(object@predictor) )
+              return( method(object = object@predictor) )
             })
 
 #' Retrieve Predictor Arguments
@@ -155,11 +184,11 @@ setMethod(f = "predictor",
 setGeneric(name = "predictorArgs",
            def = function(object,...) { standardGeneric("predictorArgs") })
 
-#' @rdname modelObj-internal-api
+#' @rdname predictorArgs
 setMethod(f = "predictorArgs",  
-          signature = c(object="modelObj"), 
+          signature = c(object = "modelObj"), 
           definition = function(object,...) {
-              return( methodArgs(object@predictor) )
+              return( methodArgs(object = object@predictor) )
             })
 
 #' @rdname predictorArgs
@@ -169,10 +198,16 @@ setMethod(f = "predictorArgs",
 setGeneric(name = "predictorArgs<-",
            def = function(object, value) { standardGeneric("predictorArgs<-") })
 
-#' @rdname modelObj-internal-api
+#' @rdname predictorArgs
 setMethod(f = "predictorArgs<-",   
-          signature = c(object="modelObj"), 
+          signature = c(object = "ANY",
+                        value = "ANY"), 
+          definition = function(object, value) { stop("not defined") })
+#' @rdname predictorArgs
+setMethod(f = "predictorArgs<-",   
+          signature = c(object = "modelObj",
+                        value = "list"), 
           definition = function(object, value) {
-              methodArgs(object@predictor) <- value
+              methodArgs(object = object@predictor) <- value
               return( object )
             })

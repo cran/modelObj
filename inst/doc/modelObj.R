@@ -1,5 +1,4 @@
 ### R code from vignette source 'modelObj.Rnw'
-### Encoding: UTF-8
 
 ###################################################
 ### code chunk number 1: modelObj.Rnw:185-187

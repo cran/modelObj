@@ -1,3 +1,4 @@
+#' @include modelObj.R methodObjSolverXY.R methodObjPredict.R
 #' @rdname modelObj
 setClass("modelObjXY",
          contains = c("modelObj"))
@@ -13,11 +14,8 @@ setClass("modelObjXY",
   predictor <- .newMethodObjPredict(method = predict.method, 
                                     args = predict.args)
 
-  obj <- new("modelObjXY", 
-             model = model, 
-             solver = solver,
-             predictor = predictor)
-
-  return( obj )
-
+  return( new("modelObjXY", 
+              model = model, 
+              solver = solver,
+              predictor = predictor) )
 }

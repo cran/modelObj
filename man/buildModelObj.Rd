@@ -4,8 +4,13 @@
 \alias{buildModelObj}
 \title{Create an Object of Class modelObj}
 \usage{
-buildModelObj(model, solver.method = NULL, solver.args = NULL,
-  predict.method = NULL, predict.args = NULL)
+buildModelObj(
+  model,
+  solver.method = NULL,
+  solver.args = NULL,
+  predict.method = NULL,
+  predict.args = NULL
+)
 }
 \arguments{
 \item{model}{An object of class formula; the model.}

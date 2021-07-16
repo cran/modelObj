@@ -2,13 +2,11 @@
 #'
 #' A class for storing regression analysis results.
 #'
-#' @name modelObjFit
-#' @rdname modelObjFit
+#' @name modelObjFit-class
+#' @rdname modelObjFit-class
 #'
 #' @slot fitObj Object returned by the regression analysis
-#' @slot model Object of class \code{formula}
-#' @slot func Object of class \code{methodObjPredict} method to obtain 
-#'   predicted values.
+#' @slot modelObj Object of class \code{modelObj}.
 #'
 #' @section Methods:
 #'   \describe{
@@ -25,6 +23,9 @@
 #' @examples
 #' showClass("modelObjFit")
 #' 
+#' @export
+#' @include modelObj.R
+#'
 setClass("modelObjFit", 
          slots = c(fitObj = "ANY",
                    modelObj = "modelObj"))
@@ -58,13 +59,13 @@ setClass("modelObjFit",
 #'                ncol=4,
 #'                dimnames=list(NULL,c("X1","X2","X3","X4")))
 #'
-#'    Y <- X \%*\% c(0.1, 0.2, 0.3, 0.4) + rnorm(250)
+#'    Y <- X %*% c(0.1, 0.2, 0.3, 0.4) + rnorm(250)
 #'
 #'    X <- data.frame(X)
 #'
 #'    # create modeling object using a formula
 #'    mo <- buildModelObj(model=Y ~ X1 + X2 + X3 + X4,
-#'                   solver.method='lm')
+#'                        solver.method='lm')
 #'
 #'    # fit model
 #'    fit.obj <- fit(object=mo, data=X, response=Y)
@@ -77,7 +78,7 @@ setClass("modelObjFit",
 #'
 #' @export
 setGeneric(name = "fit", 
-           def = function(object, data, response, ...){
+           def = function(object, data, response, ...) {
                    standardGeneric("fit")
                  })
 
@@ -131,7 +132,7 @@ setMethod(f = "fit",
 #'                ncol=4,
 #'                dimnames=list(NULL,c("X1","X2","X3","X4")))
 #'
-#'    Y <- X \%*\% c(0.1, 0.2, 0.3, 0.4) + rnorm(250)
+#'    Y <- X %*% c(0.1, 0.2, 0.3, 0.4) + rnorm(250)
 #'
 #'    X <- data.frame(X)
 #'
@@ -149,6 +150,11 @@ setMethod(f = "fit",
 #' @export
 setGeneric(name = "fitObject",
            def = function(object,...) { standardGeneric("fitObject") })
+
+#' @rdname fitObject
+setMethod(f = "fitObject", 
+         signature = c(object = "ANY"), 
+         definition = function(object,...) { stop("not defined") })
 
 #' @rdname fitObject
 setMethod(f = "fitObject", 
@@ -180,12 +186,13 @@ setMethod(f = "solverArgs",
          signature = c(object = "modelObjFit"), 
          definition = function(object,...) { return( solverArgs(object@modelObj) ) })
 
-#' @rdname modelObj-internal-api
+#' @describeIn modelObjFit Extract Model Coefficients
 #' @importFrom stats coef
 #' @export
-setMethod(f="coef",
+setMethod(f = "coef",
           signature = c(object = "modelObjFit"),
-          definition = function(object,...){
+          definition = function(object,...) {
+
               tmp <- tryCatch(expr = coef(object = object@fitObj,...), 
                               error = function(e){
                                         warnMsg(x = "coef", 
@@ -195,20 +202,22 @@ setMethod(f="coef",
               return( tmp )
             })
 
-#' @rdname modelObj-internal-api
-#' @importFrom graphics plot
+#' @describeIn modelObjFit X-Y plotting
+#' @param x An object of class modelObjFit
+#' @param y ignored
 #' @export
 setMethod(f = "plot",
           signature = c(x = "modelObjFit"),
           definition = function(x, ...){
-              tmp <- tryCatch(expr = plot(x = x@fitObj,...), 
+              tmp <- tryCatch(expr = plot(x = x@fitObj, ...), 
                               error = function(e){
                                         warnMsg(x = "plot", 
                                                 cx = class(x = x@fitObj))
                                       })
             })
 
-#' @rdname modelObj-internal-api
+#' @describeIn modelObjFit Print regression results
+#' @param x An object of class modelObjFit
 #' @export
 setMethod(f = "print",
           signature = c(x = "modelObjFit"),
@@ -237,7 +246,7 @@ setMethod(f = "print",
 #'                ncol=4,
 #'                dimnames=list(NULL,c("X1","X2","X3","X4")))
 #'
-#'    Y <- X \%*\% c(0.1, 0.2, 0.3, 0.4) + rnorm(250)
+#'    Y <- X %*% c(0.1, 0.2, 0.3, 0.4) + rnorm(250)
 #'
 #'    X <- data.frame(X)
 #'
@@ -259,19 +268,26 @@ NULL
 setMethod(f = "predict",
           signature = c(object="modelObjFit"),
           definition = function(object, newdata, ...) {
+
               if (missing(x = newdata)) {
+
                 res <- .predict(object = object@modelObj@predictor,
                                 fitObj = object@fitObj)
+
               } else {
+
                 res <- .predict(object = object@modelObj@predictor,
                                 newdata = newdata,
-                                fitObj = object@fitObj)
+                                fitObj = object@fitObj,
+                                model = object@modelObj@model)
+
               }
+
               return( res )
             })
                        
-#' @rdname modelObj-internal-api
-#' @importFrom stats residuals
+#' @describeIn modelObjFit Extract residuals
+#' @param object An object of class modelObjFit
 #' @export
 setMethod(f = "residuals",
           signature = c(object = "modelObjFit"),
@@ -292,13 +308,16 @@ setMethod(f = "residuals",
               return( tmp )
              })
 
-#' @rdname modelObj-internal-api
+#' @describeIn modelObjFit Show regression results
+#' @param object An object of class modelObjFit
 #' @export
 setMethod(f = "show",
           signature = c(object="modelObjFit"),
-          definition = function(object) { show(object@fitObj) })
+          definition = function(object) { show(object = object@fitObj) })
 
-#' @rdname modelObj-internal-api
+#' @describeIn modelObjFit Show summary results
+#' @param object An object of class modelObjFit
+#' @param ... passed to underlying method defined for regression value object.
 #' @export
 setMethod(f = "summary",
           signature = c(object="modelObjFit"),

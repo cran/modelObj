@@ -69,6 +69,8 @@
 #'                        solver.method='lm', 
 #'                        predict.method='predict.lm',
 #'                        predict.args=list(type='response'))
+#' @include modelObjXY.R modelObjFormula.R
+#'
 
 buildModelObj <-  function(model, 
                            solver.method = NULL, 
