@@ -1,4 +1,4 @@
-e87b34b1c75d933a47e53cdb7793ec62 *DESCRIPTION
+b1236f1e8727e6a176733dc33b902061 *DESCRIPTION
 919249c4cd7f54b7cf9fcbc40ab3f89e *NAMESPACE
 846391fc4519f95daafa1a2045c39e74 *R/buildModelObj.R
 5fbe978adbf437c96bad444130d06c55 *R/methodObj.R
@@ -11,10 +11,10 @@ e23bd95c82e62d4ec8008e84e5e45388 *R/modelObj.R
 f375f0d4996ef7dff2b7e83ee32cd0c0 *R/modelObjFormula.R
 4bed198201d2b6f4c0166e29258834a5 *R/modelObjXY.R
 c0cd8e9a61d1317bd0139f18fdba970f *R/warnMsg.R
-16fcda2e99e7f2353d27c9d516e1bb56 *build/vignette.rds
-818e49c9d82e3f9808c3fa7e81d3937d *inst/doc/modelObj.R
+133b297b6bada45a12681aa08f5119fe *build/vignette.rds
+a6f04064646ba100e1fa872dae30075c *inst/doc/modelObj.R
 42156106829df39377155b711ff0a8ab *inst/doc/modelObj.Rnw
-f498ec7a22ffc76dd6d24f1b1baaec67 *inst/doc/modelObj.pdf
+7eb62b177606b5e1f1f566c395682a2f *inst/doc/modelObj.pdf
 df913b83d690eef5adf8845b09c9b614 *man/buildModelObj.Rd
 5e9d62d7f639cbac00b1e949e46c6e02 *man/fit.Rd
 a62f5b49a04a38eac5ed4b63cff97f5f *man/fitObject.Rd
