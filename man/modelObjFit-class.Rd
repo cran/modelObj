@@ -37,19 +37,19 @@ A class for storing regression analysis results.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{coef}: Extract Model Coefficients
+\item \code{coef(modelObjFit)}: Extract Model Coefficients
 
-\item \code{plot}: X-Y plotting
+\item \code{plot(modelObjFit)}: X-Y plotting
 
-\item \code{print}: Print regression results
+\item \code{print(modelObjFit)}: Print regression results
 
-\item \code{residuals}: Extract residuals
+\item \code{residuals(modelObjFit)}: Extract residuals
 
-\item \code{show}: Show regression results
+\item \code{show(modelObjFit)}: Show regression results
 
-\item \code{summary}: Show summary results
+\item \code{summary(modelObjFit)}: Show summary results
+
 }}
-
 \section{Slots}{
 
 \describe{

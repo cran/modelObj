@@ -45,7 +45,7 @@ If defined by the modeling function, the following methods can be applied
 
    # create modeling object using a formula
    mo <- buildModelObj(model=Y ~ X1 + X2 + X3 + X4,
-                  solver.method='lm')
+                       solver.method='lm')
 
    # fit model
    fit.obj <- fit(object=mo, data=X, response=Y)
